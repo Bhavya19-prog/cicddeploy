@@ -1,0 +1,10 @@
+[build]
+  base    = "fleetmanagement"
+  publish = "build"
+  command = "npm run build"
+
+[dev]
+  port = 3000
+  command = "npm start"
+  targetPort = 3000
+  framework = "#custom"
