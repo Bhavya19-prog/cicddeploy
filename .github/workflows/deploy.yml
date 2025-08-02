@@ -18,6 +18,8 @@ jobs:
       with:
         node-version: '18'   # or whatever version you use
 
+    - name: cd to project directory
+      run: cd FleetManagementMicroservice
     - name: Install dependencies
       run: npm install
 
