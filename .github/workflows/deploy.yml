@@ -1,0 +1,38 @@
+name: CI/CD Pipeline to VM
+
+on:
+  push:
+    branches:
+      - main   # Or your default branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'   # or whatever version you use
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm test   # skip if you don't have tests
+
+    - name: Deploy to VM via SSH
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VM_HOST }}
+        username: ${{ secrets.VM_USER }}
+        key: ${{ secrets.VM_SSH_KEY }}
+        port: 22
+        script: |
+          cd /ubuntu/fleetMgtMS
+          git pull origin main
+          npm install
+          pm2 restart app || pm2 start app.js --name app
