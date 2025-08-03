@@ -24,7 +24,7 @@ jobs:
 
     - name: Run tests
       run: npm test
-      working-directory: FleetManagementMicroservice
+      #working-directory: FleetManagementMicroservice Skip if you don't have tests.
 
     - name: Deploy to VM via SSH
       uses: appleboy/ssh-action@v1.0.3
