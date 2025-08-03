@@ -18,13 +18,13 @@ jobs:
       with:
         node-version: '18'   # or whatever version you use
 
-    - name: cd to project directory
-      run: cd FleetManagementMicroservice
     - name: Install dependencies
       run: npm install
+      working-directory: FleetManagementMicroservice
 
     - name: Run tests
-      run: npm test   # skip if you don't have tests
+      run: npm test
+      working-directory: FleetManagementMicroservice
 
     - name: Deploy to VM via SSH
       uses: appleboy/ssh-action@v1.0.3
