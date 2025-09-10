@@ -20,7 +20,7 @@ mongoose
 
   // 🔐 Add CORS middleware before routes
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'https://fleet-api.prodigypulsetech.com',
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
