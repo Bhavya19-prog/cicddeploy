@@ -9,7 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 type Driver = {
   id: string;
-  name: string;
+  password: string;
   //phone: string;
   email: string;
   age:string;
@@ -24,7 +24,7 @@ type Driver = {
 export function DriverManagement() {
   const [drivers, setDrivers] = useState<Driver[]>([])
   const [formData, setFormData] = useState({
-    name: "",
+    password: "",
     //phone: "",
     email: "",
     age:"",
@@ -39,28 +39,37 @@ export function DriverManagement() {
  const handleAddDriver = async (e: React.FormEvent) => {
   e.preventDefault()
 
+
+  
+
+
   try {
-    const response = await fetch("http://localhost:3001/api/users", {
+     const token = localStorage.getItem('token');
+     if (!token) throw new Error('User not authenticated');
+    const response = await fetch("https://fleet-api.prodigypulsetech.com/api/users", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+     headers: {
+        "Authorization": `Bearer ${token}`, // Important: matches what Passport expects
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(formData),
     })
    
     if (!response.ok) {
-      throw new Error("Failed to add driver"+JSON.stringify(formData))
-    }
+        const errorText = await response.text();
+      throw new Error("Failed to add driver: " + errorText);
+   }
 
     const newDriver = await response.json()
     setDrivers((prev) => [...prev, newDriver])
 
     // Reset form
     setFormData({
-      name: "",
+      password: "",
      // phone: "",
       email: "",
       age:"",
+     
       //vehicle: "",
       //status: "online",
       //rating: 5.0,
@@ -68,9 +77,9 @@ export function DriverManagement() {
       //earnings: "$0",
       //licenseExpiry: "",
     })
-  } catch (error) {
-    console.error("Error adding driver:", error)
-    // Optionally show a toast or error message in UI
+  } catch (error: any) {
+    console.error("Error adding driver:", error);
+    alert("Error: " + error.message);
   }
 }
 
@@ -107,7 +116,7 @@ export function DriverManagement() {
       {/* ✨ Add Driver Form */}
       <form onSubmit={handleAddDriver} className="space-y-4 p-6 border rounded-md bg-gray-50">
         <h3 className="text-xl font-semibold">Add New Driver</h3>
-        <Input placeholder="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+        <Input placeholder="Password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
         <Input placeholder="Email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
         <Input placeholder="Age" value={formData.age} onChange={(e) => setFormData({ ...formData, age: e.target.value })} />
          <Button type="submit">
@@ -137,14 +146,9 @@ export function DriverManagement() {
             {drivers.map((driver) => (
               <div key={driver.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
                 <div className="flex items-center space-x-4">
-                  <Avatar>
-                    <AvatarImage src={`/placeholder.svg?height=40&width=40`} />
-                    <AvatarFallback>
-                      {driver.name.split(" ").map((n) => n[0]).join("")}
-                    </AvatarFallback>
-                  </Avatar>
+                
                   <div>
-                    <div className="font-medium">{driver.name}</div>
+                    <div className="font-medium">{driver.password}</div>
                     <div className="text-sm text-gray-600 flex items-center space-x-4">
                        <span className="flex items-center"><Mail className="w-3 h-3 mr-1" />{driver.email}</span>
                     </div>

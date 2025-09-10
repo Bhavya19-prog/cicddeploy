@@ -1,36 +1,48 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Header } from "@/components/header"
-import { Sidebar } from "@/components/sidebar"
-import { DashboardOverview } from "@/components/dashboard-overview"
-import { VehicleManagement } from "@/components/vehicle-management"
-import { DriverManagement } from "@/components/driver-management"
-import { TripManagement } from "@/components/trip-management"
-import { Analytics } from "@/components/analytics"
-import { LiveMap } from "@/components/live-map"
+import useAuth from "@/hooks/useAuth";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Header } from "@/components/header";
+import { Sidebar } from "@/components/sidebar";
+import { DashboardOverview } from "@/components/dashboard-overview";
+import { VehicleManagement } from "@/components/vehicle-management";
+import { DriverManagement } from "@/components/driver-management";
+import { TripManagement } from "@/components/trip-management";
+import { Analytics } from "@/components/analytics";
+import { LiveMap } from "@/components/live-map";
 
 export default function FleetManagement() {
-  const [activeTab, setActiveTab] = useState("dashboard")
-   const [data, setData] = useState(null);
+  const { isAuthenticated, loading } = useAuth();
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.replace("/login"); // ✅ Redirect now works
+    }
+  }, [loading, isAuthenticated, router]);
+
   const renderContent = () => {
     switch (activeTab) {
       case "dashboard":
-        return <DashboardOverview />
+        return <DashboardOverview />;
       case "vehicles":
-        return <VehicleManagement />
+        return <VehicleManagement />;
       case "drivers":
-        return <DriverManagement />
+        return <DriverManagement />;
       case "trips":
-        return <TripManagement />
+        return <TripManagement />;
       case "analytics":
-        return <Analytics />
+        return <Analytics />;
       case "map":
-        return <LiveMap />
+        return <LiveMap />;
       default:
-        return <DashboardOverview />
+        return <DashboardOverview />;
     }
-  }
+  };
+
+  if (loading || !isAuthenticated) return null;
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -40,5 +52,5 @@ export default function FleetManagement() {
         <main className="flex-1 overflow-y-auto p-6">{renderContent()}</main>
       </div>
     </div>
-  )
+  );
 }
